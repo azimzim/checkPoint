@@ -1,21 +1,20 @@
 import axios from "axios";
-import type{ User } from "../Types/user";
+import type { User } from "../Types/user";
 
+// GET /api/users
 export const getUsers = async () => {
-  const response = await axios.get('/api/hello');
+  const response = await axios.get('/api/users');
   return response.data;
 };
 
-
-
-export const setUsers = async (user:User) => {
-  const response = await axios.post('/api/hello', user);
+// POST /api/users
+export const createUser = async (user: Omit<User, "id">) => {
+  const response = await axios.post('/api/users', user);
   return response.data;
 };
 
-
-
-export const deleteUser = async (id:string) => {
-  const response = await axios.delete('/api/hello');
+// DELETE /api/users/:id
+export const deleteUser = async (id: string) => {
+  const response = await axios.delete(`/api/users/${id}`);
   return response.data;
 };

@@ -2,7 +2,8 @@ import { useState} from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 import './App.css'
-import HelloMessage from './components/HelloMessage'
+import Users from './components/Users/Users'
+
 
 function App() {
   const [count, setCount] = useState(0)
@@ -10,8 +11,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HelloMessage />} />
-        <Route path="/hello" element={<HelloMessage />} />
+        <Route path="/" element={<Users />} />
+        <Route path="/users" element={<Users />} />
       </Routes>
     </Router>
     
