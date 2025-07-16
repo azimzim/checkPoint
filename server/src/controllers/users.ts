@@ -14,24 +14,47 @@ export const getUsers = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   const { firstName, lastName, email, password } = req.body;
- console.log("📩 Incoming POST body:", req.body);
-  try {
-    const user = await prisma.user.create({
-      data: { firstName, lastName, email, password },
-    });
-    res.status(201).json(user);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to create user' });
+ const maxRetries = 3;
+  let attempt = 0;
+
+  while (attempt < maxRetries) {
+    try {
+      const user = await prisma.user.create({
+        data: { firstName, lastName, email, password },
+      });
+      return res.status(201).json(user);
+    } catch (error) {
+      attempt++;
+      console.warn(`⚠️ DB write failed (attempt ${attempt}):`, error);
+
+      if (attempt >= maxRetries) {
+        return res.status(500).json({ message: "Failed to create user after multiple attempts." });
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 500)); // המתנה 500ms לפני ניסיון חוזר
+    }
   }
 };
 
 export const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  try {
-    await prisma.user.delete({ where: { id } });
-    res.status(204).end();
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to delete user' });
+  const maxRetries = 3;
+  let attempt = 0;
+
+  while (attempt < maxRetries) {
+    try {
+      await prisma.user.delete({ where: { id } });
+      return res.status(204).end(); 
+    } catch (error) {
+      attempt++;
+      console.warn(`⚠️ Delete failed (attempt ${attempt}):`, error);
+
+      if (attempt >= maxRetries) {
+        return res.status(500).json({ message: 'Failed to delete user after multiple attempts' });
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    }
   }
 };

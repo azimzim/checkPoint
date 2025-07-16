@@ -2,18 +2,15 @@ import React, { useState, useEffect } from 'react';
 import type { User } from '../../Types/user';
 import { createUser, deleteUser, getUsers } from '../../api/users';
 import CreateUserModal from '../CreateUserModal/CreateUserModal';
+import UserRow from '../UserRow';
 import './Users.css';
 
 const Users: React.FC = () => {
   const [usersList, setUsersList] = useState<User[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  let onMounted = false;
 
   useEffect(() => {
-    if (onMounted) return; 
-    onMounted = true;
     fetchUsers();
-    
   }, []);
 
   const fetchUsers = async () => {
@@ -64,12 +61,7 @@ const Users: React.FC = () => {
           </div>
 
           {usersList.map(user => (
-            <div key={user.id} className="table-row">
-              <span>{user.firstName}</span>
-              <span>{user.lastName}</span>
-              <span>{user.email}</span>
-              <button onClick={() => handleDeleteUser(user.id)}>Delete</button>
-            </div>
+            <UserRow key={user.id} user={user} onDelete={handleDeleteUser} />
           ))}
         </div>
       </div>
